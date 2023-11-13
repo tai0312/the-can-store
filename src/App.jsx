@@ -8,6 +8,8 @@ async function fetchData(){
 
 export default function App() {
   const [content,setContent] = useState([]);
+  const [category,setCategory] = useState("All");
+  const [term,setTerm] = useState("");
   useEffect (() => {
     (async () =>{ 
       const newContent = await fetchData();
@@ -21,14 +23,20 @@ export default function App() {
       </header>
       <div>
         <aside>
-          <form>
+          <form onSubmit={(event) =>{
+            event.preventDefault();
+            const selectCategory = event.target.elements.category.value;
+            setCategory(selectCategory);
+            const selectTerm = event.target.elements.searchTerm.value;
+            setTerm(selectTerm);
+          }}>
             <div>
               <label htmlFor="category">Choose a category:</label>
               <select id="category">
                 <option>All</option>
-                <option>Vegetables</option>
-                <option>Meat</option>
-                <option>Soup</option>
+                <option>vegetables</option>
+                <option>meat</option>
+                <option>soup</option>
               </select>
             </div>
             <div>
@@ -36,19 +44,23 @@ export default function App() {
               <input type="text" id="searchTerm" placeholder="e.g. beans" />
             </div>
             <div>
-              <button>Filter results</button>
+              <button type="submit">Filter results</button>
             </div>
           </form>
         </aside>
         <main>
           {content.map((data) => {
-            return (
-              <section key={data.name} className={data.type}>
-                <h2>{data.name}</h2>
-                <p>${data.price}</p>
-                <img src={"image/"+data.image} alt={data.name}/>
-            </section>
-            );
+            if(category=="All" || category == data.type){
+              if(term=="" || data.name.includes(term.toLowerCase())){
+                return (
+                <section key={data.name} className={data.type}>
+                  <h2>{data.name}</h2>
+                  <p>${data.price}</p>
+                  <img src={"image/"+data.image} alt={data.name}/>
+                </section>
+                );
+              }
+            }
           })}
             
         </main>
