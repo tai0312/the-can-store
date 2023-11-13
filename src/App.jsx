@@ -1,4 +1,19 @@
+import { useEffect,useState } from "react";
+
+async function fetchData(){
+  const response = await fetch("products.json");
+  const data = await response.json();
+  return data;
+}
+
 export default function App() {
+  const [content,setContent] = useState([]);
+  useEffect (() => {
+    (async () =>{ 
+      const newContent = await fetchData();
+      setContent(newContent);
+    })();
+  },[]);
   return (
     <>
       <header>
@@ -25,7 +40,18 @@ export default function App() {
             </div>
           </form>
         </aside>
-        <main></main>
+        <main>
+          {content.map((data) => {
+            return (
+              <section key={data.name} className={data.type}>
+                <h2>{data.name}</h2>
+                <p>${data.price}</p>
+                <img src={"image/"+data.image} alt={data.name}/>
+            </section>
+            );
+          })}
+            
+        </main>
       </div>
       <footer>
         <p>All icons found at the Noun Project:</p>
